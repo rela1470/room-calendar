@@ -1,0 +1,102 @@
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="style.css" rel="stylesheet" type="text/css">
+    <title>Room Reserved Display</title>
+  </head><body>
+    <div class="navbar navbar-default navbar-inverse navbar-static-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-ex-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#"><span>Room Reserved Display</span></a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-ex-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <p class="text-muted">Updated: <?= $now; ?></p>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="section">
+      <div class="container">
+        <div class="row" style="display: flex; flex-wrap: wrap;">
+
+          <?php foreach ($eventArray as $events) {  ?>
+          <?php if (! isset($events['now'])) { ?>
+            <div class="<?= $column; ?> bg-success">
+              <h3>Free 〜<?= $events['next']['start']; ?></h3>
+              <h3><?= $events['next']['roomName']; ?></h3>
+              <div class="col-sm-7">
+                  <h3>次の予約まで<br><?= gmdate('H時間i分', $events['next']['diff']); ?></h3>
+              </div>
+              <div class="col-sm-5">
+                  <img src="free-icon.png" class="img-responsive img-circle pull-right">
+              </div>
+            </div>
+          <?php } else { ?>
+          <?php $event = $events['now']; ?>
+
+            <div class="<?= $column; ?> bg-danger">
+                <h3><?= ($event['isOutside']) ? '<span class="label label-success">[ご来訪]</span>' : '<span class="label label-default">[社内]</span>'; ?></h3>
+                <h3>Reserved <?= $event['start']; ?> 〜 <?= $event['end']; ?></h3>
+                <h3><?= $event['location']; ?></h3>
+                <div class="col-sm-7">
+
+                  <h1><?= $event['owner']['name']; ?></h1>
+                  <h4>
+                    <?php foreach ($event['guests'] as $guest) { ?>
+                      <img src="https://www.gravatar.com/avatar/<?= $guest['md5']; ?>?s=25&d=retro" class="img-circle"><?= $guest['name']; ?>
+                    <?php } ?>
+                  </h4>
+                </div>
+                <div class="col-sm-5">
+                  <img src="https://www.gravatar.com/avatar/<?= $event['owner']['md5']; ?>?s=200&d=retro" class="img-responsive img-circle pull-right">
+                </div>
+              </div>
+
+            <?php } ?>
+          <?php } ?>
+
+        </div>
+
+
+        <div class="row bg-primary">
+          <?php foreach ($eventArray as $events) { ?>
+
+          <?php if (! isset($events['prev'])) { ?>
+          <div class="<?= $column; ?>">
+          </div>
+          <?php continue; } ?>
+
+          <?php $event = $events['prev']; ?>
+          <div class="<?= $column; ?>">
+              <h4>Prev <?= $event['location']; ?></h4>
+              <h5><?= ($event['isOutside']) ? '<span class="label label-success">[ご来訪]</span>' : '<span class="label label-default">[社内]</span>'; ?>
+                  <?= $event['start']; ?> 〜 <?= $event['end']; ?> Owner: <img src="https://www.gravatar.com/avatar/<?= $event['owner']['md5']; ?>?s=15&d=retro" class="img-circle"><?= $event['owner']['name']; ?></h5>
+          </div>
+          <?php } ?>
+        </div>
+
+        <div class="row bg-info">
+          <?php foreach ($eventArray as $events) { ?>
+          <?php $event = $events['next']; ?>
+            <div class="<?= $column; ?>">
+              <h3>Next <?= $event['location']; ?></h3>
+              <h4><?= ($event['isOutside']) ? '<span class="label label-success">[ご来訪]</span>' : '<span class="label label-default">[社内]</span>'; ?>
+                  <?= $event['start']; ?> 〜 <?= $event['end']; ?> Owner: <img src="https://www.gravatar.com/avatar/<?= $event['owner']['md5']; ?>?s=25&d=retro" class="img-circle"><?= $event['owner']['name']; ?></h4>
+            </div>
+          <?php } ?>
+        </div>
+      </div>
+    </div>
+  
+
+</body></html>
